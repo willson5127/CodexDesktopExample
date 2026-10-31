@@ -22,9 +22,9 @@
 - 使用者可在本機 PowerShell 執行以下指令新增或更新憑證；帳號與密碼會互動詢問，密碼不顯示，也不會寫入指令歷史：
 
 ```powershell
-& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Repository\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service portainer
-& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Repository\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service gitea
-& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Repository\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service jenkins
+& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service portainer
+& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service gitea
+& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service jenkins
 ```
 
 - 助理需要登入時，先在本機程序內以 `Import-Clixml -LiteralPath 'C:\Users\(username)\AppData\Local\Alpha_Codex\credentials\<識別名稱>.credential.clixml'` 讀取 `PSCredential`，直接交給對應服務的登入程式使用；僅於登入介面必要時在記憶體中解密。
@@ -34,15 +34,42 @@
 
 ## 工作目錄
 
-- 使用者配發的工作目錄，其根目錄僅允許下列三個核心目錄；不得建立其他同層級目錄。各核心目錄內可依專案與任務需要建立子目錄。
+- 使用者配發的工作目錄，其根目錄僅允許下列四個核心目錄；不得建立其他同層級目錄。各核心目錄內可依專案與任務需要建立子目錄。
 
 | 目錄 | 用途與維護原則 |
 | --- | --- |
 | `Document` | 存放供人類開發者與 AI 代理人閱讀、持續維護的技術文件，例如需求、架構、開發規範與操作說明。 |
 | `Repository` | 存放專案原始碼與 Git 儲存庫，作為開發、偵錯、修正、重構、測試及版本控制的工作區。代理人應依各專案指引自主維護，並保留使用者既有變更。 |
+| `Tools` | 存放開發工具、SDK、執行環境、虛擬環境與本機啟動腳本；安裝產物不納入版控，首次設定所需的工具腳本須納入版控。 |
 | `Temporary` | 存放任務期間產生的暫存腳本、草稿、測試輸出與其他臨時檔案。每次使用前及任務結束時，檢查其中由代理人建立的檔案，確認不再需要後即清除。 |
 
-- 新增檔案前，先依用途選擇目錄；需長期保留的文件放入 `Document`，程式碼及可重複使用的開發工具放入 `Repository`，臨時產物放入 `Temporary`。
+- 新增檔案前，先依用途選擇目錄；需長期保留的文件放入 `Document`，專案原始碼及需納入版本控制的工具原始碼放入 `Repository`，未納入版本控制的開發工具與環境放入 `Tools`，臨時產物放入 `Temporary`。
+- 搬移工具或環境至 `Tools` 時，須同步修正啟動腳本與文件中的路徑；虛擬環境應依新路徑重建並驗證。
 - 不得讓正式程式或長期維護流程依賴 `Temporary` 中的檔案；需要保留的成果應整理至適當目錄，並同步更新引用路徑。
 - 清理暫存檔時，不得刪除使用者建立、其他任務仍在使用或用途不明的檔案；無法確認是否可刪除時，先保留並說明。
 - 憑證仍依「登入憑證的存放與取用」規範存放於工作目錄之外，不得移入上述目錄。
+
+## 版本控制
+
+### Commit
+
+- 採用 Conventional Commits 格式：`<type>(<scope>): <摘要>`；`scope` 可省略，`type` 使用 `feat`、`fix`、`docs`、`refactor`、`test`、`chore` 等標準類型。
+- 摘要與內文使用繁體中文；專案明訂其他語言或需配合維護者母語時，再補充對應語言。格式關鍵字、程式識別字與路徑保留原文。
+- 標題簡潔描述變更目的；空一行後於內文交代修改原因、修改內容與必要的驗證結果。列出受影響檔案的專案相對路徑，並說明各項主要變更。
+- 提交前檢查工作區及差異，只納入本次任務相關變更，保留使用者既有修改。
+
+### Push
+
+- 優先推送至「本地開發服務」的 Git 儲存庫。推送前確認 remote URL、目標分支與待推送的提交，避免誤推其他服務或專案。
+- 依專案分支規範使用工作分支；透過 Pull Request 提交審查。更新同一需求時，優先推送至既有且仍開啟的 PR 分支。
+
+### Pull Request
+
+- 標題與內文使用繁體中文，語言例外同 Commit；內文使用標準 Markdown，依最終變更範圍更新標題與說明。
+- 說明以下內容，讓未參與對話的審查者也能理解變更：
+  - 需求與目的：本次要解決的問題、觸發情境及預期結果。
+  - 最終變更：受影響檔案的專案相對路徑、具體修改內容與行為影響。
+  - 測試與驗證：單元測試及其他檢查的執行方式、結果與涵蓋範圍。
+  - 異常與處置：遇到的問題、處理方式，以及尚未解決的限制；沒有異常時明確寫「無」。
+  - 模擬發佈：建置、封裝、預覽或試跑的方式與結果；未執行或不適用時，明確說明原因。
+- 僅記錄實際執行的檢查與結果；未執行、失敗、略過或不適用的項目須如實標示，不得將模擬發佈描述為正式部署。
