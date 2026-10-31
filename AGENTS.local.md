@@ -51,6 +51,13 @@
 
 ## 版本控制
 
+### Author
+
+- 本工作區的 AI 代理人使用英文名稱 `Alpha`，工具識別為 `Codex`；Git 提交信箱依 `<名稱>_<工具識別>@NoEMail` 組成，固定為 `Alpha_Codex@NoEMail`，僅供識別，不用於收信。
+- 在實際提交的儲存庫設定 `git config --local user.name "Alpha"` 與 `git config --local user.email "Alpha_Codex@NoEMail"`；每次使用新儲存庫時都須套用，不修改使用者的全域 Git 身分。
+- 提交前以 `git var GIT_AUTHOR_IDENT` 與 `git var GIT_COMMITTER_IDENT` 確認實際作者與提交者皆為上述身分；如有環境變數覆寫，須先排除對本次提交的影響。
+- 提交後檢查最新 commit 的 Author 與 Committer。此規則適用於後續新提交，不回溯改寫既有提交的作者資訊。
+
 ### Commit
 
 - 採用 Conventional Commits 格式：`<type>(<scope>): <摘要>`；`scope` 可省略，`type` 使用 `feat`、`fix`、`docs`、`refactor`、`test`、`chore` 等標準類型。
