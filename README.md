@@ -2,6 +2,33 @@
 
 提供開發者與 AI 代理人共同使用的 Windows 本機工作區範例，包含目錄分工、協作規則及本地服務憑證設定腳本。適合用作新工作區的起點。
 
+## 先安裝 Docker 與 Codex
+
+### Docker Desktop（Windows）
+
+1. 依 [Docker 官方安裝說明](https://docs.docker.com/desktop/setup/install/windows-install/) 確認 Windows 系統需求與硬體虛擬化設定。
+2. 使用 WSL 2 後端時，以系統管理員開啟 PowerShell：尚未安裝 WSL 請執行 `wsl --install`，已安裝則執行 `wsl --update`；依提示重新啟動電腦。
+3. 從上述官方頁面下載 Docker Desktop 安裝程式，依精靈完成安裝並選用 WSL 2 後端。
+4. 從開始功能表啟動 Docker Desktop，完成首次設定，等待引擎就緒。
+5. 在新的 PowerShell 視窗執行以下指令，確認 Docker 用戶端、引擎與 Compose 可用：
+
+```powershell
+docker version
+docker compose version
+docker run --rm hello-world
+```
+
+`docker version` 應顯示 Client 與 Server 資訊；`hello-world` 首次執行會下載測試映像，成功後顯示歡迎訊息。本儲存庫尚未提供 Portainer、Gitea 或 Jenkins 的 Compose 設定，這些服務須另外準備並啟動。
+
+### Codex 桌面使用環境
+
+1. 開啟 [OpenAI 官方快速入門](https://learn.chatgpt.com/docs/quickstart)，從頁面下載 Windows 桌面應用程式並完成安裝。目前官方指引以 ChatGPT 桌面應用程式提供 Codex 入口。
+2. 啟動應用程式，以自己的 ChatGPT 帳號登入。
+3. 在應用程式中選擇 Codex；完成下方 clone 步驟後，開啟本機專案資料夾作為工作位置。
+4. 開始工作前，請代理人閱讀 `AGENTS.local.md` 並確認適用規範。
+
+可先傳送：「請閱讀此工作區的 AGENTS.local.md，確認目錄與版本控制規範，先不要修改檔案。」再交付實際開發任務。
+
 ## 專案內容
 
 | 路徑 | 用途 |
