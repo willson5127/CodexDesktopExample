@@ -22,9 +22,9 @@
 - 使用者可在本機 PowerShell 執行以下指令新增或更新憑證；帳號與密碼會互動詢問，密碼不顯示，也不會寫入指令歷史：
 
 ```powershell
-& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Repository\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service portainer
-& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Repository\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service gitea
-& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Repository\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service jenkins
+& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service portainer
+& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service gitea
+& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service jenkins
 ```
 
 - 助理需要登入時，先在本機程序內以 `Import-Clixml -LiteralPath 'C:\Users\(username)\AppData\Local\Alpha_Codex\credentials\<識別名稱>.credential.clixml'` 讀取 `PSCredential`，直接交給對應服務的登入程式使用；僅於登入介面必要時在記憶體中解密。
@@ -40,7 +40,7 @@
 | --- | --- |
 | `Document` | 存放供人類開發者與 AI 代理人閱讀、持續維護的技術文件，例如需求、架構、開發規範與操作說明。 |
 | `Repository` | 存放專案原始碼與 Git 儲存庫，作為開發、偵錯、修正、重構、測試及版本控制的工作區。代理人應依各專案指引自主維護，並保留使用者既有變更。 |
-| `Tools` | 存放未納入版本控制的開發工具、SDK、執行環境、虛擬環境與本機啟動腳本。 |
+| `Tools` | 存放開發工具、SDK、執行環境、虛擬環境與本機啟動腳本；安裝產物不納入版控，首次設定所需的工具腳本須納入版控。 |
 | `Temporary` | 存放任務期間產生的暫存腳本、草稿、測試輸出與其他臨時檔案。每次使用前及任務結束時，檢查其中由代理人建立的檔案，確認不再需要後即清除。 |
 
 - 新增檔案前，先依用途選擇目錄；需長期保留的文件放入 `Document`，專案原始碼及需納入版本控制的工具原始碼放入 `Repository`，未納入版本控制的開發工具與環境放入 `Tools`，臨時產物放入 `Temporary`。

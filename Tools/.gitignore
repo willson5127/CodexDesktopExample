@@ -1,3 +1,8 @@
-# 保留目錄結構；本機工具、SDK 與虛擬環境不納入版控。
+# 忽略安裝產物；保留首次設定所需的憑證設定腳本。
 *
 !.gitignore
+!LocalDevelopmentTools/
+LocalDevelopmentTools/*
+!LocalDevelopmentTools/scripts/
+LocalDevelopmentTools/scripts/*
+!LocalDevelopmentTools/scripts/Set-LocalServiceCredential.ps1
