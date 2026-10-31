@@ -15,7 +15,7 @@
 ## 工作目錄與開發工具
 
 工作目錄包含 Document、Repository、Temporary 與 Tools 四個核心目錄。
-`C:\AISourceCode\Alpha_Codex\Tools` 存放未納入版本控制的開發工具、SDK、執行環境、虛擬環境與本機啟動腳本。
+`Tools` 存放未納入版本控制的開發工具、SDK、執行環境、虛擬環境與本機啟動腳本。
 需納入版本控制的工具原始碼仍放在 Repository；例如本儲存庫的憑證設定腳本。
 將工具複製至工作目錄供本機使用時，請放入 Tools\LocalDevelopmentTools，並同步更新本機 AGENTS.local.md 的執行路徑。
 搬移工具時須同步更新文件及啟動腳本；虛擬環境須依新路徑重建並驗證。
