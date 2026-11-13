@@ -16,18 +16,18 @@
 
 ## 登入憑證的存放與取用
 
-- 憑證目錄：`C:\Users\(username)\AppData\Local\Alpha_Codex\credentials`，位於工作目錄及 Git 儲存庫之外。
+- 憑證目錄：`%USERPROFILE%\AppData\Local\AIAgent\credentials`，位於工作目錄及 Git 儲存庫之外。
 - 每個服務使用 `<識別名稱>.credential.clixml`。密碼以 Windows DPAPI 加密，只能由同一台電腦上的同一 Windows 使用者解密；帳號名稱本身不加密。目錄僅允許目前使用者與 SYSTEM 存取。
 - 使用一般使用者權限即可執行，支援 Windows PowerShell 5.1 與 PowerShell 7；僅調整目錄存取權限，不修改擁有者或稽核設定。
-- 使用者可在本機 PowerShell 執行以下指令新增或更新憑證；帳號與密碼會互動詢問，密碼不顯示，也不會寫入指令歷史：
+- 使用者可在本機 PowerShell 切換至本工作區根目錄後，執行以下指令新增或更新憑證；帳號與密碼會互動詢問，密碼不顯示，也不會寫入指令歷史：
 
 ```powershell
-& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service portainer
-& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service gitea
-& 'C:\AISourceCode\Alpha_Codex\Repository\CodexDesktopExample\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1' -Service jenkins
+.\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1 -Service portainer
+.\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1 -Service gitea
+.\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1 -Service jenkins
 ```
 
-- 助理需要登入時，先在本機程序內以 `Import-Clixml -LiteralPath 'C:\Users\(username)\AppData\Local\Alpha_Codex\credentials\<識別名稱>.credential.clixml'` 讀取 `PSCredential`，直接交給對應服務的登入程式使用；僅於登入介面必要時在記憶體中解密。
+- 助理需要登入時，先在本機程序內以 `Import-Clixml -LiteralPath (Join-Path $env:USERPROFILE 'AppData\Local\AIAgent\credentials\<識別名稱>.credential.clixml')` 讀取 `PSCredential`，直接交給對應服務的登入程式使用；僅於登入介面必要時在記憶體中解密。
 - 不得將帳號密碼、解密後的值、Token 或 Session Cookie 輸出到聊天、終端、日誌、截圖、文件、原始碼或 Git。避免讓登入工具回顯敏感參數。不得把密碼當作命令列引數。
 - 憑證缺少或解密失敗時，請使用者執行上方對應指令更新；不要猜測密碼，也不要要求使用者在聊天中提供密碼。
 - 儲存憑證不代表已授權部署、刪除資料或更改服務設定；依當次任務的授權範圍操作。
@@ -57,8 +57,8 @@
 
 ### Author
 
-- 本工作區的 AI 代理人使用英文名稱 `Alpha`，工具識別為 `Codex`；Git 提交信箱依 `<名稱>_<工具識別>@NoEMail` 組成，固定為 `Alpha_Codex@NoEMail`，僅供識別，不用於收信。
-- 在實際提交的儲存庫設定 `git config --local user.name "Alpha"` 與 `git config --local user.email "Alpha_Codex@NoEMail"`；每次使用新儲存庫時都須套用，不修改使用者的全域 Git 身分。
+- `AIAgent` 是本範本供 AI 代理人使用的通用代稱，不是人類使用者的姓名或帳號。使用者可自行指定 AI 名稱；若更換代稱，須同步更新本文件、README 與憑證腳本中的識別及目錄名稱。工具識別依實際使用工具填寫。Git 提交信箱以 `<AI名稱>@NoEMail` 表示，預設為 `AIAgent@NoEMail`，僅供識別，不用於收信。
+- 在實際提交的儲存庫設定 `git config --local user.name "AIAgent"` 與 `git config --local user.email "AIAgent@NoEMail"`；每次使用新儲存庫時都須套用，不修改使用者的全域 Git 身分。
 - 提交前以 `git var GIT_AUTHOR_IDENT` 與 `git var GIT_COMMITTER_IDENT` 確認實際作者與提交者皆為上述身分；如有環境變數覆寫，須先排除對本次提交的影響。
 - 提交後檢查最新 commit 的 Author 與 Committer。此規則適用於後續新提交，不回溯改寫既有提交的作者資訊。
 

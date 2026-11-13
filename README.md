@@ -46,13 +46,13 @@ docker run --rm hello-world
 準備 Windows、Git，以及 Windows PowerShell 5.1 或 PowerShell 7。
 
 ```powershell
-git clone http://localhost:3000/willson5127/CodexDesktopExample.git
+git clone "<儲存庫網址>" CodexDesktopExample
 Set-Location CodexDesktopExample
 ```
 
-此網址使用本機 Gitea，請先確認服務已啟動；在其他電腦使用時，改為可連線的儲存庫網址。
+請將 `<儲存庫網址>` 替換為自己的 Git 儲存庫網址；若使用本機 Gitea，請先確認服務已啟動。
 
-閱讀 `AGENTS.local.md`，依實際工作區位置調整其中的指令路徑，並確認服務網址及協作規則。工作區包含上述四個核心目錄；本專案的 README 與代理人指引放在根目錄。
+閱讀 `AGENTS.local.md`，其中的相對路徑指令皆以本工作區根目錄為起點；請確認服務網址及協作規則。工作區包含上述四個核心目錄；本專案的 README 與代理人指引放在根目錄。
 
 ## 設定本地服務憑證
 
@@ -78,7 +78,7 @@ Set-Location CodexDesktopExample
 | `portainer` | https://localhost:9443/ |
 | `jenkins` | http://127.0.0.1:8080/ |
 
-憑證存於目前使用者的 `%LOCALAPPDATA%\Alpha_Codex\credentials`，檔名為 `<服務識別>.credential.clixml`。密碼使用 Windows DPAPI 加密，只能由同一台電腦上的同一 Windows 使用者解密；帳號名稱不加密。請在各自的電腦重新設定，不要將憑證檔或解密內容提交到 Git。
+憑證存於目前使用者的 `%USERPROFILE%\AppData\Local\AIAgent\credentials`，檔名為 `<服務識別>.credential.clixml`。密碼使用 Windows DPAPI 加密，只能由同一台電腦上的同一 Windows 使用者解密；帳號名稱不加密。請在各自的電腦重新設定，不要將憑證檔或解密內容提交到 Git。
 
 此腳本只處理憑證儲存，不會安裝服務、建立服務帳號或驗證登入是否成功。
 
@@ -88,4 +88,4 @@ Set-Location CodexDesktopExample
 
 Commit 與 PR 使用繁體中文，Commit 採 Conventional Commits 格式，並透過工作分支與 PR 進行審查。PR 應交代需求、檔案變更、驗證結果、異常處置及模擬發佈情況，最後附上工具、模型資訊與署名。完整要求以 `AGENTS.local.md` 為準。
 
-`Alpha <Alpha_Codex@NoEMail>` 是本工作區 AI 代理人的 Git 識別；人類開發者請使用自己的提交身分。
+`AIAgent` 是本範本給 AI 代理人的通用代稱，不是人類使用者的姓名或帳號。預設 Git 識別為 `AIAgent <AIAgent@NoEMail>`，憑證目錄也使用此代稱。使用者可自行指定 AI 名稱；若更換，請同步更新 `AGENTS.local.md`、本文件及憑證腳本。人類開發者請使用自己的提交身分。

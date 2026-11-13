@@ -16,7 +16,7 @@ if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) {
 }
 
 $profileDirectory = [Environment]::GetFolderPath('UserProfile')
-$credentialDirectory = Join-Path $profileDirectory 'AppData\Local\Alpha_Codex\credentials'
+$credentialDirectory = Join-Path $profileDirectory 'AppData\Local\AIAgent\credentials'
 $directory = New-Item -ItemType Directory -Path $credentialDirectory -Force
 if (($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
     throw 'The credential directory must not be a symbolic link or junction.'
