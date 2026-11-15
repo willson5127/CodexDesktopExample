@@ -37,7 +37,7 @@ docker run --rm hello-world
 | --- | --- |
 | [AGENTS.md](AGENTS.md) | AI 代理人的工作指引，包含目錄、憑證與版本控制規範。 |
 | [.gitignore](.gitignore) | 工作區共用的 Git 忽略規則，排除本機憑證目錄。 |
-| `Assests/` | 保存本機資產；`credentials/` 的憑證不納入 Git。 |
+| `Assets/` | 保存本機資產；`credentials/` 的憑證不納入 Git。 |
 | `Document/` | 保存需要持續維護的需求、架構與技術文件。 |
 | `Repository/` | 保存專案原始碼與 Git 儲存庫。 |
 | `Tools/` | 保存開發工具與環境；安裝產物不進版，首次設定所需腳本保留版控。 |
@@ -46,7 +46,7 @@ docker run --rm hello-world
 
 目前 `Document/document.txt`、`Repository/project.txt` 與 `Temporary/trash.txt` 是空白佔位檔；此範例尚未包含應用程式。
 
-`Assests` 是此工作區採用的資料夾名稱，請沿用此拼字。憑證目錄會在執行設定腳本時建立，clone 後看不到該目錄是正常的。
+`Assets` 是此工作區採用的資料夾名稱，請沿用此拼字。憑證目錄會在執行設定腳本時建立，clone 後看不到該目錄是正常的。
 
 ## 開始使用
 
@@ -95,11 +95,11 @@ Set-Location CodexDesktopExample
 | `portainer` | https://localhost:9443/ |
 | `jenkins` | http://localhost:8080/ |
 
-憑證存於工作區的 `Assests\credentials`，檔名為 `<服務識別>.credential.clixml`。密碼使用 Windows DPAPI 加密，只能由同一台電腦上的同一 Windows 使用者解密；帳號名稱不加密。請在各自的電腦重新設定，不要將憑證檔或解密內容提交到 Git。
+憑證存於工作區的 `Assets\credentials`，檔名為 `<服務識別>.credential.clixml`。密碼使用 Windows DPAPI 加密，只能由同一台電腦上的同一 Windows 使用者解密；帳號名稱不加密。請在各自的電腦重新設定，不要將憑證檔或解密內容提交到 Git。
 
-憑證路徑由 `$PSScriptRoot` 解析為 `..\Assests\credentials`，不受呼叫時所在目錄影響。舊位置的憑證不會自動搬移，請重新執行設定指令。
+憑證路徑由 `$PSScriptRoot` 解析為 `..\Assets\credentials`，不受呼叫時所在目錄影響。舊位置的憑證不會自動搬移，請重新執行設定指令。
 
-例如設定 Gitea 後，檔案會位於 `Assests/credentials/gitea.credential.clixml`。腳本會限制目錄權限，僅允許目前 Windows 使用者與 SYSTEM 完整控制，不會更改擁有者或稽核設定。更新同一服務會覆蓋原憑證，不保留舊版本。
+例如設定 Gitea 後，檔案會位於 `Assets/credentials/gitea.credential.clixml`。腳本會限制目錄權限，僅允許目前 Windows 使用者與 SYSTEM 完整控制，不會更改擁有者或稽核設定。更新同一服務會覆蓋原憑證，不保留舊版本。
 
 若先前使用深層路徑的設定腳本，請改用上方 `Tools` 下的新指令。舊版存於使用者設定檔下的憑證仍會保留；新腳本不會讀取、搬移或刪除它們。
 
@@ -112,7 +112,7 @@ Set-Location CodexDesktopExample
 共用忽略規則放在根目錄 `.gitignore`，使用以下規則排除憑證及其寫入暫存檔：
 
 ```gitignore
-/Assests/credentials/
+/Assets/credentials/
 ```
 
 `.gitignore` 本身應納入版控。加密憑證仍屬本機資料，請勿強制加入 Git、分享帳號內容或輸出解密後的密碼。這項規則只會忽略尚未被 Git 追蹤的檔案；如果憑證已提交，新增忽略規則不會清除既有追蹤或歷史，需另行處理。

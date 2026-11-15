@@ -23,7 +23,7 @@ if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) {
 }
 
 # 從腳本所在的 Tools 目錄解析相對位置，不受呼叫時的工作目錄影響。
-$credentialDirectory = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\Assests\credentials'))
+$credentialDirectory = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\Assets\credentials'))
 $directory = New-Item -ItemType Directory -Path $credentialDirectory -Force
 # 拒絕將憑證目錄本身設為符號連結或 junction，避免寫入其他位置。
 if (($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
