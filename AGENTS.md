@@ -1,5 +1,7 @@
 # 本機工作指引
 
+- 本文件供 AI 代理人執行任務時遵循；人類使用者的環境設定與操作說明放在 `README.md`。變更共用路徑或流程時，須同步維護兩份文件。
+- 本文件中的相對路徑以工作區根目錄為基準。`Assests` 為本工作區既定名稱，請保留此拼字。
 - 使用繁體中文回覆。
 - 修改前先閱讀相關程式碼與專案指引，保持變更簡單且聚焦。
 - 保留使用者既有變更，完成後執行適當檢查並簡述結果。
@@ -16,28 +18,33 @@
 
 ## 登入憑證的存放與取用
 
-- 憑證目錄：`%USERPROFILE%\AppData\Local\AIAgent\credentials`，位於工作目錄及 Git 儲存庫之外。
+- 憑證目錄：`Assests\credentials`，相對於工作區根目錄；腳本以自身所在目錄解析路徑，不受目前工作目錄影響。憑證檔不得納入 Git。
 - 每個服務使用 `<識別名稱>.credential.clixml`。密碼以 Windows DPAPI 加密，只能由同一台電腦上的同一 Windows 使用者解密；帳號名稱本身不加密。目錄僅允許目前使用者與 SYSTEM 存取。
 - 使用一般使用者權限即可執行，支援 Windows PowerShell 5.1 與 PowerShell 7；僅調整目錄存取權限，不修改擁有者或稽核設定。
+- 設定腳本固定放在 `Tools/Set-LocalServiceCredential.ps1`，以 `$PSScriptRoot` 為基準解析 `../Assests/credentials`；不得改回依賴呼叫者的目前工作目錄或固定的開發機絕對路徑。維護腳本時須保留繁體中文註解，說明重要流程與限制。
+- `-InitializeOnly` 只建立憑證目錄與設定權限；`-Service` 新增或覆蓋指定服務的憑證。腳本不會驗證登入、建立服務帳號或自動搬移舊憑證。
+- 憑證目錄本身不得為符號連結或 junction。匯出時先寫入該目錄內的暫存檔，完成後再替換正式檔案，並清除殘留暫存檔。
 - 使用者可在本機 PowerShell 切換至本工作區根目錄後，執行以下指令新增或更新憑證；帳號與密碼會互動詢問，密碼不顯示，也不會寫入指令歷史：
 
 ```powershell
-.\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1 -Service portainer
-.\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1 -Service gitea
-.\Tools\LocalDevelopmentTools\scripts\Set-LocalServiceCredential.ps1 -Service jenkins
+.\Tools\Set-LocalServiceCredential.ps1 -Service portainer
+.\Tools\Set-LocalServiceCredential.ps1 -Service gitea
+.\Tools\Set-LocalServiceCredential.ps1 -Service jenkins
 ```
 
-- 助理需要登入時，先在本機程序內以 `Import-Clixml -LiteralPath (Join-Path $env:USERPROFILE 'AppData\Local\AIAgent\credentials\<識別名稱>.credential.clixml')` 讀取 `PSCredential`，直接交給對應服務的登入程式使用；僅於登入介面必要時在記憶體中解密。
+- 助理需要登入時，先將 `$workspaceRoot` 設為實際工作區根目錄，再在本機程序內以 `Import-Clixml -LiteralPath (Join-Path $workspaceRoot 'Assests\credentials\<識別名稱>.credential.clixml')` 讀取 `PSCredential`，直接交給對應服務的登入程式使用；僅於登入介面必要時在記憶體中解密。
 - 不得將帳號密碼、解密後的值、Token 或 Session Cookie 輸出到聊天、終端、日誌、截圖、文件、原始碼或 Git。避免讓登入工具回顯敏感參數。不得把密碼當作命令列引數。
 - 憑證缺少或解密失敗時，請使用者執行上方對應指令更新；不要猜測密碼，也不要要求使用者在聊天中提供密碼。
+- 舊版存於使用者設定檔下的憑證不會自動搬移；使用新位置前，請使用者重新設定。不得自行刪除舊憑證。
 - 儲存憑證不代表已授權部署、刪除資料或更改服務設定；依當次任務的授權範圍操作。
 
 ## 工作目錄
 
-- 使用者配發的工作目錄，其根目錄僅允許下列四個核心目錄；不得建立其他同層級目錄。各核心目錄內可依專案與任務需要建立子目錄。
+- 使用者配發的工作目錄，其根目錄僅允許下列五個核心目錄；不得建立其他同層級目錄。各核心目錄內可依專案與任務需要建立子目錄。
 
 | 目錄 | 用途與維護原則 |
 | --- | --- |
+| `Assests` | 存放本機資產；`credentials/` 保存 DPAPI 加密憑證，不得納入 Git。 |
 | `Document` | 存放供人類開發者與 AI 代理人閱讀、持續維護的技術文件，例如需求、架構、開發規範與操作說明。 |
 | `Repository` | 存放專案原始碼與 Git 儲存庫，作為開發、偵錯、修正、重構、測試及版本控制的工作區。代理人應依各專案指引自主維護，並保留使用者既有變更。 |
 | `Tools` | 存放開發工具、SDK、執行環境、虛擬環境與本機啟動腳本；安裝產物不納入版控，首次設定所需的工具腳本須納入版控。 |
@@ -47,7 +54,12 @@
 - 搬移工具或環境至 `Tools` 時，須同步修正啟動腳本與文件中的路徑；虛擬環境應依新路徑重建並驗證。
 - 不得讓正式程式或長期維護流程依賴 `Temporary` 中的檔案；需要保留的成果應整理至適當目錄，並同步更新引用路徑。
 - 清理暫存檔時，不得刪除使用者建立、其他任務仍在使用或用途不明的檔案；無法確認是否可刪除時，先保留並說明。
-- 憑證仍依「登入憑證的存放與取用」規範存放於工作目錄之外，不得移入上述目錄。
+- 憑證依「登入憑證的存放與取用」規範存放於 `Assests\credentials`，不得納入 Git。
+
+### Git 忽略規則
+
+- 工作區共用忽略規則集中於根目錄 `.gitignore`。憑證規則為 `/Assests/credentials/`，涵蓋該目錄內的正式憑證及暫存檔；不要在 `Assests` 另放一份 `.gitignore`。
+- `.gitignore` 只影響尚未追蹤的檔案，無法移除已追蹤的檔案或歷史內容。提交前須檢查暫存區，不得強制加入憑證；若發現憑證已受追蹤或曾提交，應告知使用者並依授權處理，不得擅自改寫歷史。
 
 ### Document
 
@@ -57,7 +69,7 @@
 
 ### Author
 
-- `AIAgent` 是本範本供 AI 代理人使用的通用代稱，不是人類使用者的姓名或帳號。使用者可自行指定 AI 名稱；若更換代稱，須同步更新本文件、README 與憑證腳本中的識別及目錄名稱。工具識別依實際使用工具填寫。Git 提交信箱以 `<AI名稱>@NoEMail` 表示，預設為 `AIAgent@NoEMail`，僅供識別，不用於收信。
+- `AIAgent` 是本範本供 AI 代理人使用的通用代稱，不是人類使用者的姓名或帳號。使用者可自行指定 AI 名稱；若更換代稱，須同步更新本文件與 README 中的身分說明。憑證路徑不依 AI 名稱變更。工具識別依實際使用工具填寫。Git 提交信箱以 `<AI名稱>@NoEMail` 表示，預設為 `AIAgent@NoEMail`，僅供識別，不用於收信。
 - 在實際提交的儲存庫設定 `git config --local user.name "AIAgent"` 與 `git config --local user.email "AIAgent@NoEMail"`；每次使用新儲存庫時都須套用，不修改使用者的全域 Git 身分。
 - 提交前以 `git var GIT_AUTHOR_IDENT` 與 `git var GIT_COMMITTER_IDENT` 確認實際作者與提交者皆為上述身分；如有環境變數覆寫，須先排除對本次提交的影響。
 - 提交後檢查最新 commit 的 Author 與 Committer。此規則適用於後續新提交，不回溯改寫既有提交的作者資訊。
