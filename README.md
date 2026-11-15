@@ -65,6 +65,14 @@ Set-Location CodexDesktopExample
 
 腳本已納入版本控制，clone 後可直接使用。以下指令皆在本儲存庫根目錄執行，不需要系統管理員權限。
 
+建議為 AI 建立專用服務帳號，並為每個服務分別產生一組不含連字號（`-`）的 UUID 作為密碼。可由您在本機 PowerShell 執行以下指令，將產生的 32 字元密碼直接複製到剪貼簿，不在終端顯示：
+
+```powershell
+[guid]::NewGuid().ToString('N') | Set-Clipboard
+```
+
+先在對應服務建立帳號或更新密碼，再執行下方憑證設定腳本，於密碼提示時貼上同一組密碼。若服務要求大小寫或特殊符號，請依其密碼規則調整。完成後可執行 `Set-Clipboard -Value ''` 清除目前剪貼簿內容；若啟用剪貼簿歷程或同步，也請清除相關紀錄。請勿將產生的密碼貼到聊天、文件或 Git。
+
 只初始化憑證目錄：
 
 ```powershell
@@ -85,7 +93,7 @@ Set-Location CodexDesktopExample
 | --- | --- |
 | `gitea` | http://localhost:3000/ |
 | `portainer` | https://localhost:9443/ |
-| `jenkins` | http://127.0.0.1:8080/ |
+| `jenkins` | http://localhost:8080/ |
 
 憑證存於工作區的 `Assests\credentials`，檔名為 `<服務識別>.credential.clixml`。密碼使用 Windows DPAPI 加密，只能由同一台電腦上的同一 Windows 使用者解密；帳號名稱不加密。請在各自的電腦重新設定，不要將憑證檔或解密內容提交到 Git。
 

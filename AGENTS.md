@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | Portainer | https://localhost:9443/ | portainer |
 | Gitea | http://localhost:3000/ | gitea |
-| Jenkins | http://127.0.0.1:8080/ | jenkins |
+| Jenkins | http://localhost:8080/ | jenkins |
 
 ## 登入憑證的存放與取用
 
